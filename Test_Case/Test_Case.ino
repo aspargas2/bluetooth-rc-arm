@@ -11,7 +11,7 @@
 //Define some baudrates
 #define DEFAULT_USB_BAUD 9600
 #define DEFAULT_HC_05_BAUD 9600
-#define AT_HC_05_BAUD
+#define AT_HC_05_BAUD 38400
 
 SoftwareSerial btSerial(BT_SERIAL_RX, BT_SERIAL_TX);
 
