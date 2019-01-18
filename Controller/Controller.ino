@@ -1,10 +1,19 @@
+/*
+
+This sketch has only is has only been tested on an Ardino Uno and an Arduino Lilypad, but it should work fine
+on any Arduino-type board that has the appropriate amount of digital pins.
+
+This sketchuses an HC-05 Bluetooth module on hcSerial to send joystick positions to the board running Arm.ino.
+
+*/
 
 #include <SoftwareSerial.h>
 
 #define AT_PIN 3
 #define HC_POWER_PIN 4
+#define CALIBRATION_BUTTON_PIN 6
 
-SoftwareSerial btSerial(9, 10);
+SoftwareSerial hcSerial(9, 10);
 
 int offset2 = 0;
 int offset3 = 0;
@@ -19,8 +28,8 @@ void hcReboot(bool at = false)
   digitalWrite(HC_POWER_PIN, HIGH);
   delay(1000);
   digitalWrite(AT_PIN, LOW);
-  if (at) btSerial.begin(38400);
-  else btSerial.begin(9600);
+  if (at) hcSerial.begin(38400);
+  else hcSerial.begin(9600);
 }
 
 //Sends a signed 16-bit integer through a stream
@@ -34,26 +43,25 @@ void sendInt(int toSend, Stream* stream)
   stream->write(d);
 }
 
+
 int analogToServo(int analog)
 {
   return map(analog, 0, 1024, 80, 120);
 }
 
-void setup() {
-  // put your setup code here, to run once:
+void setup()
+{
   Serial.begin(74880);
-  if (atMode) btSerial.begin(38400);
-  else btSerial.begin(9600);
   //pinMode(A2, INPUT);
   //pinMode(A3, INPUT);
-  pinMode(6, INPUT_PULLUP);
+  pinMode(CALIBRATION_BUTTON_PIN, INPUT_PULLUP);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);
-  digitalWrite(HC_POWER_PIN, HIGH);
+  hcReboot(atMode);
 }
 
-void loop() {
-  
+void loop()
+{  
   if (atMode)
   {
     if (Serial.available() > 1)
@@ -63,19 +71,23 @@ void loop() {
       byte b2 = Serial.read();
       if (b1 == 'A' && b2 == 'T')
       {
-        btSerial.write('A');
-        btSerial.write('T');
+        hcSerial.write('A');
+        hcSerial.write('T');
         while (Serial.available() > 0)
         {
-          btSerial.write(Serial.read());
+          hcSerial.write(Serial.read());
         }
-        btSerial.write(0x0A);
-        btSerial.write(0x0D);
+        hcSerial.write(0x0A);
+        hcSerial.write(0x0D);
       }
       else if (b1 == 'R' && b2 == 'E' && (Serial.available() > 1) && Serial.read() == 'B' && Serial.read() == 'T')
       {
         hcReboot();
-        Serial.println("Rebooted back to Bluetooth mode! Flushing buffer!");
+        Serial.println("Rebooted back to Bluetooth mode! Flushing both Serial buffers!");
+        while (hcSerial.available() > 0)
+        {
+          hcSerial.read();
+        }
         while (Serial.available() > 0)
         {
           Serial.read();
@@ -89,13 +101,13 @@ void loop() {
       }
     }
 
-    if (btSerial.available() > 0)
+    if (hcSerial.available() > 0)
     {
       delay(200);
       Serial.println("Response from the HC module:");
-      while (btSerial.available() > 0)
+      while (hcSerial.available() > 0)
       {
-        Serial.write(btSerial.read());
+        Serial.write(hcSerial.read());
       }
     }
   }
@@ -105,10 +117,10 @@ void loop() {
     for (int i = 0; i < 4; i++)
     {
       Serial.println("Header byte sent!");
-      btSerial.write((byte)0xF0);
+      hcSerial.write((byte)0xF0);
     }
   
-    if (digitalRead(6) == LOW)
+    if (digitalRead(CALIBRATION_BUTTON_PIN) == LOW)
     {
       Serial.println("Calibrating... ");
       offset2 = 512 - analogRead(A2);
@@ -118,9 +130,9 @@ void loop() {
     int readFrom3 = analogRead(A3) + offset3;
     
     Serial.println(analogToServo(readFrom2));
-    sendInt(analogToServo(readFrom2), &btSerial);
+    sendInt(analogToServo(readFrom2), &hcSerial);
     Serial.println(readFrom3);
-    sendInt(readFrom3, &btSerial);
+    sendInt(readFrom3, &hcSerial);
     delay(50);
 
     if (Serial.available() > 1)
@@ -128,12 +140,26 @@ void loop() {
       if (Serial.read() == 'A' && Serial.read() == 'T')
       {
         hcReboot(true);
-        Serial.println("Entered AT command mode! Flushing buffer!");
+        Serial.println("Entered AT command mode! Flushing buffers!");
         while (Serial.available() > 0)
         {
           Serial.read();
         }
+        while (hcSerial.available() > 0)
+        {
+          hcSerial.read();
+        }
         Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
+      }
+      else
+      {
+        Serial.println("Unrecognized input detected on USB Serial.\n\
+                       Send AT to reboot the HC module in to At command mode and enter commands. Flushing USB Serial buffer.");
+        while (Serial.available() > 0)
+        {
+          Serial.read();
+        }
+        while (hcSerial.available() > 0)
       }
     }
   }
