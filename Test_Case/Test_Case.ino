@@ -1,5 +1,4 @@
 // Test program for the BT modules
-// foo
 
 #include <SoftwareSerial.h>
 
