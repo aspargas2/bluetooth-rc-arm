@@ -1,4 +1,3 @@
-#include <SoftwareSerial.h>
 #include <Servo.h>
 
 #define PACKET_SIZE 8
