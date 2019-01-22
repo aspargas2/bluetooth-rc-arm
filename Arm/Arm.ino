@@ -1,3 +1,13 @@
+/*
+
+This sketch has only is has only been tested on an Ardino Mega and, but it should work fine
+on any Arduino-type board that has multiple hardware Serial ports and the appropriate amount of digital pins.
+
+This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positions from the board running Controller.ino
+
+
+*/
+
 #include <Servo.h>
 
 #define PACKET_SIZE 8
@@ -145,7 +155,7 @@ void loop()
       Serial.print("Increasing elbow 1 by: ");
       Serial.println(toIncrease1);
   
-      elbow1pos = constrain(elbow1pos + toIncrease1, 0, 170);
+      elbow1pos = constrain(elbow1pos + toIncrease1, 1, 179);
       Serial.print("Writing to elbow 1: ");
       Serial.println(elbow1pos);
       elbow1.write(elbow1pos);
