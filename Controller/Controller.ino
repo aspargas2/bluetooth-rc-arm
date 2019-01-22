@@ -137,7 +137,7 @@ void loop()
     sendInt(analogToServo(readFrom2), &hcSerial);
     Serial.println(readFrom3);
     sendInt(readFrom3, &hcSerial);
-    delay(50);
+    delay(20);
 
     if (Serial.available() > 1)
     {
