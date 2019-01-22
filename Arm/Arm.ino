@@ -155,7 +155,7 @@ void loop()
       Serial.print("Increasing elbow 1 by: ");
       Serial.println(toIncrease1);
   
-      elbow1pos = constrain(elbow1pos + toIncrease1, 1, 179);
+      elbow1pos = constrain(elbow1pos + toIncrease1, 11, 185);
       Serial.print("Writing to elbow 1: ");
       Serial.println(elbow1pos);
       elbow1.write(elbow1pos);
