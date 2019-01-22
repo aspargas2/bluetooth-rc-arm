@@ -92,11 +92,15 @@ void loop()
         {
           Serial.read();
         }
-        return;
+
       }
       else
       {
-        Serial.println("Invalid command");
+        Serial.println("Invalid command. Flushing USB Serial.");
+        while (Serial.available() > 0)
+        {
+          Serial.read();
+        }
         //Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
       }
     }
