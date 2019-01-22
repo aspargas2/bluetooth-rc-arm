@@ -164,6 +164,9 @@ void loop()
           Serial.read();
         }
         while (hcSerial.available() > 0)
+        {
+          hcSerial.read();
+        }
       }
     }
   }
