@@ -132,16 +132,24 @@ void loop()
     if (digitalRead(CALIBRATION_BUTTON_PIN) == LOW)
     {
       Serial.println("Calibrating... ");
-      offset2 = 512 - analogRead(JOY1X_PIN);
-      offset3 = 512 - analogRead(JOY1Y_PIN);
+      offset1 = 512 - analogRead(JOY1X_PIN);
+      offset2 = 512 - analogRead(JOY1Y_PIN);
+      offset3 = 512 - analogRead(JOY2X_PIN);
+      offset4 = 512 - analogRead(JOY2Y_PIN);
     }
-    int readFrom2 = analogRead(JOY1X_PIN) + offset2;
-    int readFrom3 = analogRead(JOY1Y_PIN) + offset3;
+    int readFrom1 = analogRead(JOY1X_PIN) + offset1;
+    int readFrom2 = analogRead(JOY1Y_PIN) + offset2;
+    int readFrom3 = analogRead(JOY2X_PIN) + offset3;
+    int readFrom4 = analogRead(JOY2X_PIN) + offset4;
     
-    Serial.println(analogToServo(readFrom2));
-    hcSerial.write((byte)analogToServo(readFrom2));
+    Serial.println(analogToServo(readFrom1));
+    hcSerial.write((byte)analogToServo(readFrom1));
+    Serial.println(readFrom2);
+    sendInt(readFrom2, &hcSerial);
     Serial.println(readFrom3);
     sendInt(readFrom3, &hcSerial);
+    Serial.println(readFrom4);
+    sendInt(readFrom4, &hcSerial);
     delay(20);
 
     if (Serial.available() > 1)
