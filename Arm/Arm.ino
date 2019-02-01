@@ -9,15 +9,29 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 
 #include <Servo.h>
 
-#define PACKET_SIZE 7
+#define PACKET_SIZE 11
 
+//Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
 
+//Non-continuous servo constraint definitions
+#define ELBOW1_MIN 11
+#define ELBOW1_MAX 185
+#define ELBOW2_MIN
+#define ELBOW2_MAX
+#define CLAW_MIN
+#define CLAW_MAX
+
 Servo baseRotate;
 Servo elbow1;
+Servo elbow2;
+Servo claw;
 
 int elbow1pos = 0;
+int elbow2pos = 0;
+int clawpos = 0;
+
 bool atMode = false;
 
 void hcReboot(bool at = false)
@@ -50,6 +64,8 @@ void setup()
   else Serial1.begin(9600);
   baseRotate.attach(6);
   elbow1.attach(7);
+  elbow2.attach(8);
+  claw.attach(9);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);
   digitalWrite(HC_POWER_PIN, HIGH);
@@ -153,19 +169,33 @@ void loop()
       baseRotate.write(toWrite1);
   
       int toIncrease1 = map(recvInt(&Serial1), 0, 1024, -10, 10);
-  
-      if (abs(toIncrease1) < 3)
-      {
-        toIncrease1 = 0;
-      }
+      int toIncrease2 = map(recvInt(&Serial1), 0, 1024, -10, 10);
+      int toIncrease3 = map(recvInt(&Serial1), 0, 1024, -10, 10);
+      
+      if (abs(toIncrease1) < 3) toIncrease1 = 0;
+      if (abs(toIncrease2) < 3) toIncrease2 = 0;
+      if (abs(toIncrease3) < 5) toIncrease3 = 0;
   
       Serial.print("Increasing elbow 1 by: ");
       Serial.println(toIncrease1);
+      Serial.print("Increasing elbow 2 by: ");
+      Serial.println(toIncrease2);
+      Serial.print("Increasing claw by: ");
+      Serial.println(toIncrease3);
   
-      elbow1pos = constrain(elbow1pos + toIncrease1, 11, 185);
+      elbow1pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
+      elbow2pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
+      clawpos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
+      
       Serial.print("Writing to elbow 1: ");
       Serial.println(elbow1pos);
       elbow1.write(elbow1pos);
+      Serial.print("Writing to elbow 2: ");
+      Serial.println(elbow2pos);
+      elbow2.write(elbow2pos);
+      Serial.print("Writing to claw: ");
+      Serial.println(clawpos);
+      claw.write(clawpos);
     }
 
     if (Serial.available() > 1)
