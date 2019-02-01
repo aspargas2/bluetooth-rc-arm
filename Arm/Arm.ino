@@ -14,6 +14,7 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 //Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
+#define IR_RECV_PIN 10
 
 //Non-continuous servo constraint definitions
 #define ELBOW1_MIN 11
@@ -67,7 +68,8 @@ void setup()
   elbow2.attach(8);
   claw.attach(9);
   pinMode(HC_POWER_PIN, OUTPUT);
-  pinMode(AT_PIN, OUTPUT);
+  pinMode(AT_PIN, OUTPUT);  
+  pinMode(IR_RECV_PIN, INPUT);
   digitalWrite(HC_POWER_PIN, HIGH);
 }
 
