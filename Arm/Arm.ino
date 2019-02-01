@@ -5,7 +5,6 @@ on any Arduino-type board that has multiple hardware Serial ports and the approp
 
 This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positions from the board running Controller.ino
 
-
 */
 
 #include <Servo.h>
