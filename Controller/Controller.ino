@@ -50,7 +50,7 @@ void sendInt(int toSend, Stream* stream)
   stream->write(d);
 }
 
-
+//Converts the analog reading of a joystick to the appropriate value to write to a continuous servo
 int analogToServo(int analog)
 {
   return map(analog, 0, 1024, 80, 120);
