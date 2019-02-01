@@ -51,14 +51,20 @@ void sendInt(int toSend, Stream* stream)
 }
 
 //Converts the analog reading of a joystick to the appropriate value to write to a continuous servo
-int analogToServo(int analog)
+int analogToContServo(int analog)
 {
   return map(analog, 0, 1024, 80, 120);
 }
 
+//Converts the analog reading of a joystick to the appropriate value by which to change the value being written to a 180 degree servo
+int analogTo180Servo(int analog)
+{
+  return map(analog, 0, 1024, -10, 10);
+}
+
 void setup()
 {
-  Serial.begin(74880);
+  Serial.begin(74880); //Debug output on USB
   pinMode(CALIBRATION_BUTTON_PIN, INPUT_PULLUP);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);
@@ -143,13 +149,13 @@ void loop()
     int readFrom4 = analogRead(JOY2X_PIN) + offset4;
     
     Serial.println(analogToServo(readFrom1));
-    hcSerial.write((byte)analogToServo(readFrom1));
+    hcSerial.write((byte)analogToContServo(readFrom1));
     Serial.println(readFrom2);
-    sendInt(readFrom2, &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom2));
     Serial.println(readFrom3);
-    sendInt(readFrom3, &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom3));
     Serial.println(readFrom4);
-    sendInt(readFrom4, &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom4));
     delay(20);
 
     if (Serial.available() > 1)
