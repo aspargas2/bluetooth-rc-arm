@@ -9,7 +9,7 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 
 #include <Servo.h>
 
-#define PACKET_SIZE 11
+#define PACKET_SIZE 8
 
 //Digital pin definitions
 #define AT_PIN 3
@@ -168,9 +168,9 @@ void loop()
       Serial.println(toWrite1);
       baseRotate.write(toWrite1);
   
-      int toIncrease1 = map(recvInt(&Serial1), 0, 1024, -10, 10);
-      int toIncrease2 = map(recvInt(&Serial1), 0, 1024, -10, 10);
-      int toIncrease3 = map(recvInt(&Serial1), 0, 1024, -10, 10);
+      int toIncrease1 = Serial1.read();
+      int toIncrease2 = Serial1.read();
+      int toIncrease3 = Serial1.read();
       
       if (abs(toIncrease1) < 3) toIncrease1 = 0;
       if (abs(toIncrease2) < 3) toIncrease2 = 0;
