@@ -139,7 +139,7 @@ void loop()
     int readFrom3 = analogRead(JOY1Y_PIN) + offset3;
     
     Serial.println(analogToServo(readFrom2));
-    sendInt(analogToServo(readFrom2), &hcSerial);
+    hcSerial.write((byte)analogToServo(readFrom2));
     Serial.println(readFrom3);
     sendInt(readFrom3, &hcSerial);
     delay(20);
@@ -158,7 +158,7 @@ void loop()
         {
           hcSerial.read();
         }
-        Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
+        Serial.println("Enter a command, or enter REBT to reboot back into Bluetooth mode");
       }
       else
       {
