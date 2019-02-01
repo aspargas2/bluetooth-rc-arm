@@ -79,16 +79,24 @@ void loop()
       else if (b1 == 'R' && b2 == 'E' && (Serial.available() > 1) && Serial.read() == 'B' && Serial.read() == 'T')
       {
         hcReboot();
-        Serial.println("Rebooted back to Bluetooth mode! Flushing buffer!");
+        Serial.println("Rebooted back to Bluetooth mode! Flushing buffers!");
         while (Serial.available() > 0)
         {
           Serial.read();
+        }
+        while (Serial1.available() > 0)
+        {
+          Serial1.read();
         }
         return;
       }
       else
       {
-        Serial.println("Invalid command");
+        Serial.println("Invalid command. Flushing buffer.");
+        while (Serial1.available() > 0)
+        {
+          Serial1.read();
+        }
         //Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
       }
     }
@@ -170,6 +178,10 @@ void loop()
         while (Serial.available() > 0)
         {
           Serial.read();
+        }
+        while (Serial1.available() > 0)
+        {
+          Serial1.read();
         }
         Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
       }
