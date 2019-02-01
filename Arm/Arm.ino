@@ -9,7 +9,7 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 
 #include <Servo.h>
 
-#define PACKET_SIZE 8
+#define PACKET_SIZE 7
 
 #define AT_PIN 3
 #define HC_POWER_PIN 4
@@ -139,7 +139,7 @@ void loop()
       }
       Serial.println("Header check passed!");
   
-      int toWrite1 = recvInt(&Serial1);
+      int toWrite1 = (int)Serial1.read();
   
       if (toWrite1 >= 95 and toWrite1 <= 105)
         toWrite1 = 100;
