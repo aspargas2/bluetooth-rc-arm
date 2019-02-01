@@ -1,7 +1,7 @@
 /*
 
-This sketch has only is has only been tested on an Ardino Uno and an Arduino Lilypad, but it should work fine
-on any Arduino-type board that has the appropriate amount of digital pins.
+This sketch has only is has only been tested on an Ardino Uno, but it should work fine
+on any Arduino-type board that has the appropriate amount of digital and analog pins.
 
 This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick positions to the board running Arm.ino.
 
@@ -9,9 +9,16 @@ This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick position
 
 #include <SoftwareSerial.h>
 
+//Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
 #define CALIBRATION_BUTTON_PIN 6
+
+//Analog pin definitions
+#define JOY1X_PIN A0
+#define JOY1Y_PIN A1
+#define JOY2X_PIN A2
+#define JOY2Y_PIN A3
 
 SoftwareSerial hcSerial(9, 10);
 
@@ -52,8 +59,6 @@ int analogToServo(int analog)
 void setup()
 {
   Serial.begin(74880);
-  //pinMode(A2, INPUT);
-  //pinMode(A3, INPUT);
   pinMode(CALIBRATION_BUTTON_PIN, INPUT_PULLUP);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);
@@ -127,11 +132,11 @@ void loop()
     if (digitalRead(CALIBRATION_BUTTON_PIN) == LOW)
     {
       Serial.println("Calibrating... ");
-      offset2 = 512 - analogRead(A2);
-      offset3 = 512 - analogRead(A3);
+      offset2 = 512 - analogRead(JOY1X_PIN);
+      offset3 = 512 - analogRead(JOY1Y_PIN);
     }
-    int readFrom2 = analogRead(A2) + offset2;
-    int readFrom3 = analogRead(A3) + offset3;
+    int readFrom2 = analogRead(JOY1X_PIN) + offset2;
+    int readFrom3 = analogRead(JOY1Y_PIN) + offset3;
     
     Serial.println(analogToServo(readFrom2));
     sendInt(analogToServo(readFrom2), &hcSerial);
