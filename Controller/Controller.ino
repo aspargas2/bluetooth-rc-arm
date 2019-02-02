@@ -156,7 +156,7 @@ void loop()
     hcSerial.write((byte)analogTo180Servo(readFrom3));
     Serial.println(readFrom4);
     hcSerial.write((byte)analogTo180Servo(readFrom4));
-    delay(20);
+    delay(200);
 
     if (Serial.available() > 1)
     {
