@@ -12,7 +12,14 @@ This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick position
 //Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
-#define CALIBRATION_BUTTON_PIN 6
+#define CALIBRATION_BUTTON_PIN 5
+#define SLOT1_PIN 6
+#define SLOT2_PIN 7
+#define SLOT3_PIN 8
+#define STOP_PIN 11
+#define RECORD_PIN 12
+#define SINGLE_PLAYBACK_PIN A4
+#define LOOP_PLAYBACK A5
 
 //Analog pin definitions
 #define JOY1X_PIN A0
