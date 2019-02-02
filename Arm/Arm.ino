@@ -19,10 +19,10 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 //Non-continuous servo constraint definitions
 #define ELBOW1_MIN 11
 #define ELBOW1_MAX 185
-#define ELBOW2_MIN
-#define ELBOW2_MAX
-#define CLAW_MIN
-#define CLAW_MAX
+#define ELBOW2_MIN 11
+#define ELBOW2_MAX 185
+#define CLAW_MIN 11
+#define CLAW_MAX 185
 
 Servo baseRotate;
 Servo elbow1;
@@ -32,8 +32,35 @@ Servo claw;
 int elbow1pos = 0;
 int elbow2pos = 0;
 int clawpos = 0;
+int rotations = 0;
 
 bool atMode = false;
+
+void returnToIR()
+{
+  if (rotations == 1)
+  {
+    baseRotate.write(90);
+    if (digitalRead(IR_RECV_PIN) == LOW) while (digitalRead(IR_RECV_PIN) == LOW);
+    while (digitalRead(IR_RECV_PIN) == HIGH);
+    while (digitalRead(IR_RECV_PIN) == LOW);
+    baseRotate.write(100);
+  }
+  else if (rotations == -1)
+  {
+    baseRotate.write(110);
+    if (digitalRead(IR_RECV_PIN) == LOW) while (digitalRead(IR_RECV_PIN) == LOW);
+    while (digitalRead(IR_RECV_PIN) == HIGH);
+    while (digitalRead(IR_RECV_PIN) == LOW);
+    baseRotate.write(100);
+  }
+  else
+  {
+    baseRotate.write(110);
+    while (digitalRead(IR_RECV_PIN) == LOW);
+    baseRotate.write(100);
+  }
+}
 
 void hcReboot(bool at = false)
 {
@@ -71,6 +98,8 @@ void setup()
   pinMode(AT_PIN, OUTPUT);  
   pinMode(IR_RECV_PIN, INPUT);
   digitalWrite(HC_POWER_PIN, HIGH);
+  returnToIR();
+  pinMode(34, INPUT_PULLUP); //temp thing for testing
 }
 
 void loop()
@@ -131,8 +160,10 @@ void loop()
   
   else
   {
+    if(digitalRead(34) == LOW) //temp testing
+      returnToIR();
     if (Serial1.available() >= PACKET_SIZE)
-    {
+    {      
       Serial.println(Serial1.available());
       byte header[4];
       Serial1.readBytes(header, 4);
@@ -165,7 +196,9 @@ void loop()
         toWrite1 += 5;
       else 
         toWrite1 -= 5;
-  
+      
+      
+      
       Serial.print("Writing to continuous servo: ");
       Serial.println(toWrite1);
       baseRotate.write(toWrite1);
