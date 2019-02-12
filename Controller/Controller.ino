@@ -28,9 +28,10 @@ This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick position
 #define JOY2Y_PIN A3
 
 SoftwareSerial hcSerial(9, 10);
-
+int offset1 = 0;
 int offset2 = 0;
 int offset3 = 0;
+int offset4 = 0;
 bool atMode = false;
 
 void hcReboot(bool at = false)
@@ -66,7 +67,7 @@ int analogToContServo(int analog)
 //Converts the analog reading of a joystick to the appropriate value by which to change the value being written to a 180 degree servo
 int analogTo180Servo(int analog)
 {
-  return map(analog, 0, 1024, -10, 10);
+  return map(analog, 0, 1024, -20, 20);
 }
 
 void setup()
@@ -153,16 +154,16 @@ void loop()
     int readFrom1 = analogRead(JOY1X_PIN) + offset1;
     int readFrom2 = analogRead(JOY1Y_PIN) + offset2;
     int readFrom3 = analogRead(JOY2X_PIN) + offset3;
-    int readFrom4 = analogRead(JOY2X_PIN) + offset4;
+    int readFrom4 = analogRead(JOY2Y_PIN) + offset4;
     
-    Serial.println(analogToServo(readFrom1));
+    Serial.println(analogToContServo(readFrom1));
     hcSerial.write((byte)analogToContServo(readFrom1));
     Serial.println(readFrom2);
-    hcSerial.write((byte)analogTo180Servo(readFrom2));
+    sendInt(analogTo180Servo(readFrom2), &hcSerial);
     Serial.println(readFrom3);
-    hcSerial.write((byte)analogTo180Servo(readFrom3));
+    sendInt(analogTo180Servo(readFrom3), &hcSerial);
     Serial.println(readFrom4);
-    hcSerial.write((byte)analogTo180Servo(readFrom4));
+    sendInt(analogTo180Servo(readFrom4), &hcSerial);
     delay(200);
 
     if (Serial.available() > 1)

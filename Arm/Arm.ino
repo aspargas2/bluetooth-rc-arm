@@ -9,12 +9,12 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 
 #include <Servo.h>
 
-#define PACKET_SIZE 8
+#define PACKET_SIZE 11
 
 //Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
-#define IR_RECV_PIN 10
+//#define IR_RECV_PIN 10
 
 //Non-continuous servo constraint definitions
 #define ELBOW1_MIN 11
@@ -36,7 +36,7 @@ int rotations = 0;
 
 bool atMode = false;
 
-void returnToIR()
+/*void returnToIR()
 {
   if (rotations == 1)
   {
@@ -60,6 +60,25 @@ void returnToIR()
     while (digitalRead(IR_RECV_PIN) == LOW);
     baseRotate.write(100);
   }
+}*/
+
+int signedByteToInt(byte s)
+{
+  Serial.print("s: ");
+  Serial.println(s);
+  int r;
+  if (s > 127)
+  {
+    s = s ^ 0xFF;
+    r = -(s + 1);
+  }
+  else
+  {
+     r = s;
+  }
+  Serial.print("r: ");
+  Serial.println(r);
+  return r;
 }
 
 void hcReboot(bool at = false)
@@ -87,7 +106,7 @@ int recvInt(Stream* stream)
 void setup()
 {
   // put your setup code here, to run once:
-  Serial.begin(74880);
+  Serial.begin(38400);
   if (atMode) Serial1.begin(38400);
   else Serial1.begin(9600);
   baseRotate.attach(6);
@@ -96,14 +115,16 @@ void setup()
   claw.attach(9);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);  
-  pinMode(IR_RECV_PIN, INPUT);
+  //pinMode(IR_RECV_PIN, INPUT);
   digitalWrite(HC_POWER_PIN, HIGH);
-  returnToIR();
-  pinMode(34, INPUT_PULLUP); //temp thing for testing
+  //returnToIR();
+  //pinMode(34, INPUT_PULLUP); //temp thing for testing
+  Serial.println("Setup done");
 }
 
 void loop()
 {
+  //Serial.println("loop");
   if (atMode)
   {
     if (Serial.available() > 1)
@@ -119,8 +140,8 @@ void loop()
         {
           Serial1.write(Serial.read());
         }
-        Serial1.write(0x0A);
-        Serial1.write(0x0D);
+        //Serial1.write(0x0A);
+        //Serial1.write(0x0D);
       }
       else if (b1 == 'R' && b2 == 'E' && (Serial.available() > 1) && Serial.read() == 'B' && Serial.read() == 'T')
       {
@@ -157,13 +178,14 @@ void loop()
       }
     }
   }
-  
+  if (false);
   else
   {
-    if(digitalRead(34) == LOW) //temp testing
-      returnToIR();
+    //if(digitalRead(34) == LOW) //temp testing
+      //returnToIR();
     if (Serial1.available() >= PACKET_SIZE)
     {      
+      
       Serial.println(Serial1.available());
       byte header[4];
       Serial1.readBytes(header, 4);
@@ -203,13 +225,13 @@ void loop()
       Serial.println(toWrite1);
       baseRotate.write(toWrite1);
   
-      int toIncrease1 = Serial1.read();
-      int toIncrease2 = Serial1.read();
-      int toIncrease3 = Serial1.read();
+      int toIncrease1 = recvInt(&Serial1);
+      int toIncrease2 = recvInt(&Serial1);
+      int toIncrease3 = recvInt(&Serial1);
       
-      if (abs(toIncrease1) < 3) toIncrease1 = 0;
-      if (abs(toIncrease2) < 3) toIncrease2 = 0;
-      if (abs(toIncrease3) < 5) toIncrease3 = 0;
+      //if (abs(toIncrease1) < 3) toIncrease1 = 0;
+      //if (abs(toIncrease2) < 3) toIncrease2 = 0;
+      //if (abs(toIncrease3) < 5) toIncrease3 = 0;
   
       Serial.print("Increasing elbow 1 by: ");
       Serial.println(toIncrease1);
@@ -219,8 +241,8 @@ void loop()
       Serial.println(toIncrease3);
   
       elbow1pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
-      elbow2pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
-      clawpos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
+      elbow2pos = constrain(elbow2pos + toIncrease2, ELBOW1_MIN, ELBOW1_MAX);
+      clawpos = constrain(clawpos + toIncrease3, ELBOW1_MIN, ELBOW1_MAX);
       
       Serial.print("Writing to elbow 1: ");
       Serial.println(elbow1pos);
@@ -233,22 +255,30 @@ void loop()
       claw.write(clawpos);
     }
 
-    if (Serial.available() > 1)
-    {
-      if (Serial.read() == 'A' && Serial.read() == 'T')
+     if (Serial.available() > 1)
       {
-        hcReboot(true);
-        Serial.println("Entered AT command mode! Flushing buffer!");
-        while (Serial.available() > 0)
+        if (Serial.read() == 'A' && Serial.read() == 'T')
         {
-          Serial.read();
+          hcReboot(true);
+          Serial.println("Entered AT command mode! Flushing buffer!");
+          while (Serial.available() > 0)
+          {
+            Serial.read();
+          }
+          while (Serial1.available() > 0)
+          {
+            Serial1.read();
+          }
+          Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
         }
-        while (Serial1.available() > 0)
+        else
         {
-          Serial1.read();
+          Serial.println("Invalid input. Flushing USB serial.");
+          while (Serial.available() > 0)
+          {
+            Serial.read();
+          }
         }
-        Serial.println("Enter a command, or enter REBT reboot back into Bluetooth mode");
-      }
     }
   }
 }
