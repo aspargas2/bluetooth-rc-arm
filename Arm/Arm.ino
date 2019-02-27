@@ -36,31 +36,6 @@ int rotations = 0;
 
 bool atMode = false;
 
-/*void returnToIR()
-{
-  if (rotations == 1)
-  {
-    baseRotate.write(90);
-    if (digitalRead(IR_RECV_PIN) == LOW) while (digitalRead(IR_RECV_PIN) == LOW);
-    while (digitalRead(IR_RECV_PIN) == HIGH);
-    while (digitalRead(IR_RECV_PIN) == LOW);
-    baseRotate.write(100);
-  }
-  else if (rotations == -1)
-  {
-    baseRotate.write(110);
-    if (digitalRead(IR_RECV_PIN) == LOW) while (digitalRead(IR_RECV_PIN) == LOW);
-    while (digitalRead(IR_RECV_PIN) == HIGH);
-    while (digitalRead(IR_RECV_PIN) == LOW);
-    baseRotate.write(100);
-  }
-  else
-  {
-    baseRotate.write(110);
-    while (digitalRead(IR_RECV_PIN) == LOW);
-    baseRotate.write(100);
-  }
-}*/
 
 int signedByteToInt(byte s)
 {
@@ -117,7 +92,7 @@ void setup()
   pinMode(AT_PIN, OUTPUT);  
   //pinMode(IR_RECV_PIN, INPUT);
   digitalWrite(HC_POWER_PIN, HIGH);
-  //returnToIR();
+
   //pinMode(34, INPUT_PULLUP); //temp thing for testing
   Serial.println("Setup done");
 }
@@ -181,8 +156,8 @@ void loop()
   if (false);
   else
   {
-    //if(digitalRead(34) == LOW) //temp testing
-      //returnToIR();
+
+
     if (Serial1.available() >= PACKET_SIZE)
     {      
       
@@ -221,10 +196,12 @@ void loop()
       
       
       
-      Serial.print("Writing to continuous servo: ");
+      /*Serial.print("Writing to continuous servo: ");
       Serial.println(toWrite1);
-      baseRotate.write(toWrite1);
+      baseRotate.write(toWrite1);*/
   
+      int toIncrease0
+= recvInt(&Serial1);
       int toIncrease1 = recvInt(&Serial1);
       int toIncrease2 = recvInt(&Serial1);
       int toIncrease3 = recvInt(&Serial1);
