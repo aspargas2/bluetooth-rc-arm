@@ -19,7 +19,7 @@ This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick position
 #define STOP_PIN 11
 #define RECORD_PIN 12
 #define SINGLE_PLAYBACK_PIN A4
-#define LOOP_PLAYBACK A5
+#define LOOP_PLAYBACK_PIN A5
 
 //Analog pin definitions
 #define JOY1X_PIN A0
@@ -68,6 +68,13 @@ void setup()
 {
   Serial.begin(74880); //Debug output on USB
   pinMode(CALIBRATION_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(SLOT1_PIN, INPUT_PULLUP);
+  pinMode(SLOT2_PIN, INPUT_PULLUP);
+  pinMode(SLOT3_PIN, INPUT_PULLUP);
+  pinMode(STOP_PIN, INPUT_PULLUP);
+  pinMode(RECORD_PIN, INPUT_PULLUP);
+  pinMode(LOOP_PLAYBACK_PIN, INPUT_PULLUP);
+  pinMode(SINGLE_PLAYBACK_PIN, INPUT_PULLUP);
   pinMode(HC_POWER_PIN, OUTPUT);
   pinMode(AT_PIN, OUTPUT);
   hcReboot(atMode);
