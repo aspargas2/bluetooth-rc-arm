@@ -29,13 +29,12 @@ Servo elbow1;
 Servo elbow2;
 Servo claw;
 
+int basepos = 0;
 int elbow1pos = 0;
 int elbow2pos = 0;
 int clawpos = 0;
-int rotations = 0;
 
 bool atMode = false;
-
 
 int signedByteToInt(byte s)
 {
@@ -200,8 +199,7 @@ void loop()
       Serial.println(toWrite1);
       baseRotate.write(toWrite1);*/
   
-      int toIncrease0
-= recvInt(&Serial1);
+      int toIncrease0 = recvInt(&Serial1);
       int toIncrease1 = recvInt(&Serial1);
       int toIncrease2 = recvInt(&Serial1);
       int toIncrease3 = recvInt(&Serial1);
@@ -210,6 +208,9 @@ void loop()
       //if (abs(toIncrease2) < 3) toIncrease2 = 0;
       //if (abs(toIncrease3) < 5) toIncrease3 = 0;
   
+      
+      Serial.print("Increasing base by: ");
+      Serial.println(toIncrease0);
       Serial.print("Increasing elbow 1 by: ");
       Serial.println(toIncrease1);
       Serial.print("Increasing elbow 2 by: ");
@@ -217,10 +218,14 @@ void loop()
       Serial.print("Increasing claw by: ");
       Serial.println(toIncrease3);
   
+      basepos = contrain(basepos + toIncrease0, BASE_MIN, BASE_MAX);
       elbow1pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
-      elbow2pos = constrain(elbow2pos + toIncrease2, ELBOW1_MIN, ELBOW1_MAX);
-      clawpos = constrain(clawpos + toIncrease3, ELBOW1_MIN, ELBOW1_MAX);
+      elbow2pos = constrain(elbow2pos + toIncrease2, ELBOW2_MIN, ELBOW2_MAX);
+      clawpos = constrain(clawpos + toIncrease3, CLAW_MIN, CLAW_MAX);
       
+      Serial.print("Writing to base: ");
+      Serial.println(basepos);
+      baseRotate.write(basepos);
       Serial.print("Writing to elbow 1: ");
       Serial.println(elbow1pos);
       elbow1.write(elbow1pos);
