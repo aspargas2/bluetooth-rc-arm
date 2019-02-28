@@ -158,13 +158,13 @@ void loop()
     int readFrom4 = analogRead(JOY2Y_PIN) + offset4;
     
     Serial.println(readFrom1);
-    sendInt(analogTo180Servo(readFrom1), &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom1));
     Serial.println(readFrom2);
-    sendInt(analogTo180Servo(readFrom2), &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom2));
     Serial.println(readFrom3);
-    sendInt(analogTo180Servo(readFrom3), &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom3));
     Serial.println(readFrom4);
-    sendInt(analogTo180Servo(readFrom4), &hcSerial);
+    hcSerial.write((byte)analogTo180Servo(readFrom4));
     delay(200);
 
     if (Serial.available() > 1)
