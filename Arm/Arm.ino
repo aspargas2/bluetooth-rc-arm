@@ -1,6 +1,6 @@
 /*
 
-This sketch has only is has only been tested on an Ardino Mega, but it should work fine
+This sketch has only been tested on an Ardino Mega, but it should work fine
 on any Arduino-type board that has multiple hardware Serial ports and the appropriate amount of digital pins.
 
 This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positions from the board running Controller.ino
