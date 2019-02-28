@@ -14,7 +14,6 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 //Digital pin definitions
 #define AT_PIN 3
 #define HC_POWER_PIN 4
-//#define IR_RECV_PIN 10
 
 //Servo constraint definitions
 #define BASE_MIN 11
