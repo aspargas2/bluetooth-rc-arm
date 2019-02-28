@@ -58,12 +58,6 @@ void sendInt(int toSend, Stream* stream)
   stream->write(d);
 }
 
-//Converts the analog reading of a joystick to the appropriate value to write to a continuous servo
-int analogToContServo(int analog)
-{
-  return map(analog, 0, 1024, 80, 120);
-}
-
 //Converts the analog reading of a joystick to the appropriate value by which to change the value being written to a 180 degree servo
 int analogTo180Servo(int analog)
 {
@@ -156,8 +150,8 @@ void loop()
     int readFrom3 = analogRead(JOY2X_PIN) + offset3;
     int readFrom4 = analogRead(JOY2Y_PIN) + offset4;
     
-    Serial.println(analogToContServo(readFrom1));
-    hcSerial.write((byte)analogToContServo(readFrom1));
+    Serial.println(readFrom1);
+    sendInt(analogTo180Servo(readFrom1), &hcSerial);
     Serial.println(readFrom2);
     sendInt(analogTo180Servo(readFrom2), &hcSerial);
     Serial.println(readFrom3);
