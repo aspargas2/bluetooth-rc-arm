@@ -1,6 +1,6 @@
 /*
 
-This sketch has only is has only been tested on an Ardino Uno, but it should work fine
+This sketch has only been tested on an Ardino Uno, but it should work fine
 on any Arduino-type board that has the appropriate amount of digital and analog pins.
 
 This sketch uses an HC-05 Bluetooth module on hcSerial to send joystick positions to the board running Arm.ino.
