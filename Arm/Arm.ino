@@ -16,7 +16,9 @@ This sketch uses an HC-05 Bluetooth module on Serial1 to recieve joystick positi
 #define HC_POWER_PIN 4
 //#define IR_RECV_PIN 10
 
-//Non-continuous servo constraint definitions
+//Servo constraint definitions
+#define BASE_MIN 11
+#define BASE_MAX 185
 #define ELBOW1_MIN 11
 #define ELBOW1_MAX 185
 #define ELBOW2_MIN 11
