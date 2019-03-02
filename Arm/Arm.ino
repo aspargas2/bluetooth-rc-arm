@@ -219,7 +219,7 @@ void loop()
       Serial.print("Increasing claw by: ");
       Serial.println(toIncrease3);
   
-      basepos = contrain(basepos + toIncrease0, BASE_MIN, BASE_MAX);
+      basepos = constrain(basepos + toIncrease0, BASE_MIN, BASE_MAX);
       elbow1pos = constrain(elbow1pos + toIncrease1, ELBOW1_MIN, ELBOW1_MAX);
       elbow2pos = constrain(elbow2pos + toIncrease2, ELBOW2_MIN, ELBOW2_MAX);
       clawpos = constrain(clawpos + toIncrease3, CLAW_MIN, CLAW_MAX);
