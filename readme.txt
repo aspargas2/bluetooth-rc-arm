@@ -1,0 +1,3 @@
+This is an old project for school from a few years ago when I was still learning C++ and definitely didn't have any idea how to correctly use git. Not much useful to see here unless you like laughing at my old, bad code and commit messages. Be my guest.
+
+The idea was to have two Arduinos communicating with HC-05 bluetooth modules which were paired with each other. One would read in analog data from some joysticks and serialize it; the other would recieve that data and move some servos accordingly. If I recall correctly, I originally meant to add a bunch of additional features like recording and playing back a sequence of movements, but by the deadline all I had gotten done was just barely making it work at all.
